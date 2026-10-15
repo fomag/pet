@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    
       - name: Checkout code
         uses: actions/checkout@v4
       
@@ -17,10 +18,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
       
       - name: Install dependencies
         run: npm install
+
+      - name: Commit lock file if missing
+        run: |
+          if [ ! -f package-lock.json ]; then
+            git config user.name "GitHub Actions"
+            git config user.email "actions@github.com"
+            git add package-lock.json
+            git commit -m "chore: add package-lock.json"
+            git push
+          fi
       
       - name: Build
         run: npm run build
