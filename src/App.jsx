@@ -1,3 +1,4 @@
+import { parseHTML, renderHTML, getDefaultContent } from './utils/htmlRenderer';
 import React, { useState } from 'react';
 import { useStore } from './store/useStore';
 import TopBar from './components/TopBar';
