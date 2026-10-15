@@ -44,33 +44,44 @@ export function parseHTML(html) {
   const doc = parser.parseFromString(html, 'text/html');
   const blocks = [];
 
-  // Parse headings
-  doc.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => {
-    blocks.push({
-      id: 'block_' + Date.now() + Math.random(),
-      type: 'heading',
-      content: {
-        text: el.textContent,
-        level: el.tagName.toLowerCase(),
-        classes: el.className
-      }
-    });
+  // Remove navigation, headers, footers, scripts, styles before parsing
+  const toRemove = doc.querySelectorAll('nav:not(.gc-subway), header, footer, script, style, noscript, [role="navigation"]');
+  toRemove.forEach(el => el.remove());
+
+  // Parse main content only (look for main tag or body)
+  const mainContent = doc.querySelector('main') || doc.body;
+
+  // Parse headings (but skip nav headings)
+  mainContent.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => {
+    if (!el.closest('nav')) {
+      blocks.push({
+        id: 'block_' + Date.now() + Math.random(),
+        type: 'heading',
+        content: {
+          text: el.textContent,
+          level: el.tagName.toLowerCase(),
+          classes: el.className
+        }
+      });
+    }
   });
 
   // Parse paragraphs
-  doc.querySelectorAll('p:not(nav p)').forEach(el => {
-    blocks.push({
-      id: 'block_' + Date.now() + Math.random(),
-      type: 'text',
-      content: {
-        text: el.innerHTML,
-        classes: el.className
-      }
-    });
+  mainContent.querySelectorAll('p').forEach(el => {
+    if (!el.closest('nav') && el.textContent.trim()) {
+      blocks.push({
+        id: 'block_' + Date.now() + Math.random(),
+        type: 'text',
+        content: {
+          text: el.innerHTML,
+          classes: el.className
+        }
+      });
+    }
   });
 
-  // Parse subway nav
-  doc.querySelectorAll('nav.gc-subway').forEach(el => {
+  // Parse subway nav (keep this intact)
+  mainContent.querySelectorAll('nav.gc-subway, nav.provisional').forEach(el => {
     const title = el.querySelector('h1')?.textContent || 'Navigation';
     blocks.push({
       id: 'block_' + Date.now() + Math.random(),
@@ -83,12 +94,12 @@ export function parseHTML(html) {
   });
 
   // Parse alerts
-  doc.querySelectorAll('.alert').forEach(el => {
+  mainContent.querySelectorAll('.alert').forEach(el => {
     blocks.push({
       id: 'block_' + Date.now() + Math.random(),
       type: 'alert',
       content: {
-        text: el.textContent,
+        text: el.textContent.trim(),
         classes: el.className
       }
     });
@@ -99,7 +110,7 @@ export function parseHTML(html) {
       id: 'block_welcome',
       type: 'text',
       content: {
-        text: 'Load a page or insert components to get started'
+        text: 'No content blocks found. Load a page or insert components to get started.'
       }
     }
   ];
