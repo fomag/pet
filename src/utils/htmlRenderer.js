@@ -6,108 +6,143 @@ export function parseHTML(html) {
   // Find main content area
   const main = doc.querySelector('main') || doc.body;
   
-  // Remove page details section
-  main.querySelectorAll('.pagedetails').forEach(el => el.remove());
+  // Remove page details and unwanted sections
+  main.querySelectorAll('.pagedetails, gcds-date-modified').forEach(el => el.remove());
 
-  // Parse h1 (page title)
-  const h1 = main.querySelector('h1');
-  if (h1) {
-    blocks.push({
-      id: 'block_' + Date.now() + Math.random(),
-      type: 'heading',
-      content: {
-        text: h1.textContent.trim(),
-        level: 'h1',
-        classes: h1.className
-      }
-    });
-  }
+  // Process children in order (preserves layout)
+  const processNode = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) return;
 
-  // Parse all paragraphs (top-level content)
-  main.querySelectorAll(':scope > p, .mwsgeneric-base-html > p').forEach(el => {
-    if (el.textContent.trim() && !el.closest('.pagedetails')) {
-      blocks.push({
-        id: 'block_' + Date.now() + Math.random(),
-        type: 'text',
-        content: {
-          text: el.innerHTML.trim(),
-          classes: el.className
-        }
-      });
-    }
-  });
+    const tag = node.tagName?.toLowerCase();
+    const classList = node.className || '';
 
-  // Parse unordered lists (not nested in other elements)
-  main.querySelectorAll(':scope > ul, .mwsgeneric-base-html > ul').forEach(el => {
-    if (!el.closest('nav')) {
-      blocks.push({
-        id: 'block_' + Date.now() + Math.random(),
-        type: 'text',
-        content: {
-          text: el.outerHTML,
-          classes: el.className
-        }
-      });
-    }
-  });
+    // Skip empty nodes
+    if (!node.textContent?.trim()) return;
 
-  // Parse subway navigation (with dl structure)
-  main.querySelectorAll('nav.gc-subway, nav.provisional.gc-subway').forEach(nav => {
-    const title = nav.querySelector('h2')?.textContent.trim() || 'Navigation';
-    
-    // Extract dt/dd pairs into items
-    const items = [];
-    nav.querySelectorAll('dt').forEach(dt => {
-      const link = dt.querySelector('a');
-      const dd = dt.nextElementSibling;
-      if (link) {
-        items.push({
-          label: link.textContent.trim(),
-          url: link.href,
-          description: dd?.textContent.trim() || ''
-        });
-      }
-    });
-
-    blocks.push({
-      id: 'block_' + Date.now() + Math.random(),
-      type: 'subway',
-      version: '3.0.0',
-      content: {
-        title,
-        items,
-        classes: nav.className
-      }
-    });
-  });
-
-  // Parse sections (with h2 headings and lists)
-  main.querySelectorAll('section:not(.pagedetails)').forEach(section => {
-    const h2 = section.querySelector('h2');
-    if (h2) {
+    // H1 - Page title
+    if (tag === 'h1') {
       blocks.push({
         id: 'block_' + Date.now() + Math.random(),
         type: 'heading',
         content: {
-          text: h2.textContent.trim(),
-          level: 'h2',
-          classes: h2.className
+          text: node.textContent.trim(),
+          level: 'h1',
+          classes: classList
         }
       });
+      return;
     }
 
-    // Parse lists within sections
-    section.querySelectorAll('ul, ol').forEach(list => {
+    // H2/H3/H4/H5/H6 - Section headings
+    if (/^h[2-6]$/.test(tag)) {
+      blocks.push({
+        id: 'block_' + Date.now() + Math.random(),
+        type: 'heading',
+        content: {
+          text: node.textContent.trim(),
+          level: tag,
+          classes: classList
+        }
+      });
+      return;
+    }
+
+    // Paragraphs
+    if (tag === 'p') {
       blocks.push({
         id: 'block_' + Date.now() + Math.random(),
         type: 'text',
         content: {
-          text: list.outerHTML,
-          classes: list.className
+          text: node.innerHTML.trim(),
+          classes: classList
         }
       });
-    });
-  });
+      return;
+    }
+
+    // Lists (UL, OL)
+    if (tag === 'ul' || tag === 'ol') {
+      blocks.push({
+        id: 'block_' + Date.now() + Math.random(),
+        type: 'text',
+        content: {
+          text: node.outerHTML,
+          classes: classList
+        }
+      });
+      return;
+    }
+
+    // Subway navigation
+    if (tag === 'nav' && (classList.includes('gc-subway') || classList.includes('provisional'))) {
+      const title = node.querySelector('h2')?.textContent.trim() || 'Navigation';
+      
+      const items = [];
+      node.querySelectorAll('dt').forEach(dt => {
+        const link = dt.querySelector('a');
+        const dd = dt.nextElementSibling;
+        if (link) {
+          items.push({
+            label: link.textContent.trim(),
+            url: link.href,
+            description: dd?.textContent.trim() || ''
+          });
+        }
+      });
+
+      blocks.push({
+        id: 'block_' + Date.now() + Math.random(),
+        type: 'subway',
+        version: '3.0.0',
+        content: {
+          title,
+          items,
+          classes: classList
+        }
+      });
+      return;
+    }
+
+    // Sections - process children recursively
+    if (tag === 'section' && !classList.includes('pagedetails')) {
+      node.childNodes.forEach(child => processNode(child));
+      return;
+    }
+
+    // Divs with content - process children
+    if (tag === 'div') {
+      // Skip container divs (row, col-md-8, etc.)
+      if (classList.includes('row') || classList.includes('col-')) {
+        node.childNodes.forEach(child => processNode(child));
+        return;
+      }
+
+      // Skip layout wrappers but process their content
+      if (classList.includes('parbase') || classList.includes('mwsgeneric-base-html')) {
+        node.childNodes.forEach(child => processNode(child));
+        return;
+      }
+
+      // Treat other divs as text blocks if they have content
+      if (node.textContent.trim()) {
+        blocks.push({
+          id: 'block_' + Date.now() + Math.random(),
+          type: 'text',
+          content: {
+            text: node.innerHTML.trim(),
+            classes: classList
+          }
+        });
+        return;
+      }
+    }
+
+    // For other tags, recursively process children
+    node.childNodes.forEach(child => processNode(child));
+  };
+
+  // Start processing from main content
+  main.childNodes.forEach(node => processNode(node));
 
   return blocks.length > 0 ? blocks : [
     {
