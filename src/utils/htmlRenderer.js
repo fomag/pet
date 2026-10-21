@@ -1,3 +1,125 @@
+export function parseHTML(html) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  const blocks = [];
+
+  // Find main content area
+  const main = doc.querySelector('main') || doc.body;
+  
+  // Remove page details section
+  main.querySelectorAll('.pagedetails').forEach(el => el.remove());
+
+  // Parse h1 (page title)
+  const h1 = main.querySelector('h1');
+  if (h1) {
+    blocks.push({
+      id: 'block_' + Date.now() + Math.random(),
+      type: 'heading',
+      content: {
+        text: h1.textContent.trim(),
+        level: 'h1',
+        classes: h1.className
+      }
+    });
+  }
+
+  // Parse all paragraphs (top-level content)
+  main.querySelectorAll(':scope > p, .mwsgeneric-base-html > p').forEach(el => {
+    if (el.textContent.trim() && !el.closest('.pagedetails')) {
+      blocks.push({
+        id: 'block_' + Date.now() + Math.random(),
+        type: 'text',
+        content: {
+          text: el.innerHTML.trim(),
+          classes: el.className
+        }
+      });
+    }
+  });
+
+  // Parse unordered lists (not nested in other elements)
+  main.querySelectorAll(':scope > ul, .mwsgeneric-base-html > ul').forEach(el => {
+    if (!el.closest('nav')) {
+      blocks.push({
+        id: 'block_' + Date.now() + Math.random(),
+        type: 'text',
+        content: {
+          text: el.outerHTML,
+          classes: el.className
+        }
+      });
+    }
+  });
+
+  // Parse subway navigation (with dl structure)
+  main.querySelectorAll('nav.gc-subway, nav.provisional.gc-subway').forEach(nav => {
+    const title = nav.querySelector('h2')?.textContent.trim() || 'Navigation';
+    
+    // Extract dt/dd pairs into items
+    const items = [];
+    nav.querySelectorAll('dt').forEach(dt => {
+      const link = dt.querySelector('a');
+      const dd = dt.nextElementSibling;
+      if (link) {
+        items.push({
+          label: link.textContent.trim(),
+          url: link.href,
+          description: dd?.textContent.trim() || ''
+        });
+      }
+    });
+
+    blocks.push({
+      id: 'block_' + Date.now() + Math.random(),
+      type: 'subway',
+      version: '3.0.0',
+      content: {
+        title,
+        items,
+        classes: nav.className
+      }
+    });
+  });
+
+  // Parse sections (with h2 headings and lists)
+  main.querySelectorAll('section:not(.pagedetails)').forEach(section => {
+    const h2 = section.querySelector('h2');
+    if (h2) {
+      blocks.push({
+        id: 'block_' + Date.now() + Math.random(),
+        type: 'heading',
+        content: {
+          text: h2.textContent.trim(),
+          level: 'h2',
+          classes: h2.className
+        }
+      });
+    }
+
+    // Parse lists within sections
+    section.querySelectorAll('ul, ol').forEach(list => {
+      blocks.push({
+        id: 'block_' + Date.now() + Math.random(),
+        type: 'text',
+        content: {
+          text: list.outerHTML,
+          classes: list.className
+        }
+      });
+    });
+  });
+
+  return blocks.length > 0 ? blocks : [
+    {
+      id: 'block_welcome',
+      type: 'text',
+      content: {
+        text: 'No content blocks found. Load a page or insert components to get started.'
+      }
+    }
+  ];
+}
+
 export function renderHTML(blocks) {
   return blocks.map(block => {
     const wrapperAttrs = `data-block-id="${block.id}"`;
@@ -9,18 +131,30 @@ export function renderHTML(blocks) {
         return `<${level} ${wrapperAttrs}${classes}>${block.content.text || 'Heading'}</${level}>`;
       
       case 'text':
+        // If it's already HTML (list or other), render as-is
+        if (block.content.text.includes('<')) {
+          return `<div ${wrapperAttrs}${classes}>${block.content.text}</div>`;
+        }
         return `<p ${wrapperAttrs}${classes}>${block.content.text || 'Text block'}</p>`;
       
       case 'subway':
+        const items = block.content.items || [];
+        const itemsHtml = items.map(item => `
+          <dt><a href="${item.url}">${item.label}</a></dt>
+          <dd>${item.description}</dd>
+        `).join('');
+        
         return `
-          <nav class="provisional gc-subway" ${wrapperAttrs}${classes} aria-label="Subway navigation">
-            <h1>${block.content.title || 'Navigation'}</h1>
-            <ul>
-              <li><a href="#" class="active">Step 1</a></li>
-              <li><a href="#">Step 2</a></li>
-              <li><a href="#">Step 3</a></li>
-            </ul>
-          </nav>
+          <div class="row">
+            <div class="col-md-8">
+              <nav class="provisional gc-subway" ${wrapperAttrs} aria-label="Subway navigation">
+                <h2>${block.content.title || 'Navigation'}</h2>
+                <dl>
+                  ${itemsHtml}
+                </dl>
+              </nav>
+            </div>
+          </div>
         `;
       
       case 'alert':
@@ -39,88 +173,11 @@ export function renderHTML(blocks) {
   }).join('\n');
 }
 
-export function parseHTML(html) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  const blocks = [];
-
-  // Remove navigation, headers, footers, scripts, styles before parsing
-  const toRemove = doc.querySelectorAll('nav:not(.gc-subway), header, footer, script, style, noscript, [role="navigation"]');
-  toRemove.forEach(el => el.remove());
-
-  // Parse main content only (look for main tag or body)
-  const mainContent = doc.querySelector('main') || doc.body;
-
-  // Parse headings (but skip nav headings)
-  mainContent.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => {
-    if (!el.closest('nav')) {
-      blocks.push({
-        id: 'block_' + Date.now() + Math.random(),
-        type: 'heading',
-        content: {
-          text: el.textContent,
-          level: el.tagName.toLowerCase(),
-          classes: el.className
-        }
-      });
-    }
-  });
-
-  // Parse paragraphs
-  mainContent.querySelectorAll('p').forEach(el => {
-    if (!el.closest('nav') && el.textContent.trim()) {
-      blocks.push({
-        id: 'block_' + Date.now() + Math.random(),
-        type: 'text',
-        content: {
-          text: el.innerHTML,
-          classes: el.className
-        }
-      });
-    }
-  });
-
-  // Parse subway nav (keep this intact)
-  mainContent.querySelectorAll('nav.gc-subway, nav.provisional').forEach(el => {
-    const title = el.querySelector('h1')?.textContent || 'Navigation';
-    blocks.push({
-      id: 'block_' + Date.now() + Math.random(),
-      type: 'subway',
-      content: {
-        title,
-        classes: el.className
-      }
-    });
-  });
-
-  // Parse alerts
-  mainContent.querySelectorAll('.alert').forEach(el => {
-    blocks.push({
-      id: 'block_' + Date.now() + Math.random(),
-      type: 'alert',
-      content: {
-        text: el.textContent.trim(),
-        classes: el.className
-      }
-    });
-  });
-
-  return blocks.length > 0 ? blocks : [
-    {
-      id: 'block_welcome',
-      type: 'text',
-      content: {
-        text: 'No content blocks found. Load a page or insert components to get started.'
-      }
-    }
-  ];
-}
-
 export function getDefaultContent(type) {
   const defaults = {
     heading: { text: 'New Heading', level: 'h2', classes: '' },
     text: { text: 'New text block', classes: '' },
-    subway: { title: 'Steps', classes: '' },
+    subway: { title: 'Steps', items: [], classes: '' },
     alert: { text: 'Alert message', classes: 'alert alert-info' },
     accordion: { title: 'Section', classes: '' },
     button: { text: 'Button', classes: 'btn btn-primary' }
