@@ -41,17 +41,13 @@ Error generating stack: `+o.message+`
           <dt><a href="${u.url}">${u.label}</a></dt>
           <dd>${u.description}</dd>
         `).join("");return`
-          <div class="row">
-            <div class="col-md-8">
-              <nav class="provisional gc-subway" ${n} aria-label="Subway navigation">
-                <h2>${t.content.title||"Navigation"}</h2>
-                <dl>
-                  ${i}
-                </dl>
-              </nav>
-            </div>
-          </div>
-        `;case"alert":return`
+    <nav class="provisional gc-subway" ${n} aria-label="Subway navigation">
+      <h2>${t.content.title||"Navigation"}</h2>
+      <dl>
+        ${i}
+      </dl>
+    </nav>
+  `;case"alert":return`
           <div class="alert alert-info" ${n}${r} role="alert">
             <h2>${t.content.text||"Alert message"}</h2>
           </div>
