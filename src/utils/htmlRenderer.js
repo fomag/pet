@@ -178,6 +178,16 @@ export function renderHTML(blocks) {
           <dt><a href="${item.url}">${item.label}</a></dt>
           <dd>${item.description}</dd>
         `).join('');
+  
+  return `
+    <nav class="provisional gc-subway" ${wrapperAttrs} aria-label="Subway navigation">
+      <h2>${block.content.title || 'Navigation'}</h2>
+      <dl>
+        ${itemsHtml}
+      </dl>
+    </nav>
+  `;
+
         
         return `
           <div class="row">
