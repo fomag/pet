@@ -72,25 +72,80 @@ Error generating stack: `+o.message+`
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- */var yl=De,ep=bd;function tp(e,t){return e===t&&(e!==0||1/e===1/t)||e!==e&&t!==t}var np=typeof Object.is=="function"?Object.is:tp,rp=ep.useSyncExternalStore,lp=yl.useRef,op=yl.useEffect,ip=yl.useMemo,up=yl.useDebugValue;cc.useSyncExternalStoreWithSelector=function(e,t,n,r,l){var o=lp(null);if(o.current===null){var i={hasValue:!1,value:null};o.current=i}else i=o.current;o=ip(function(){function s(g){if(!c){if(c=!0,h=g,g=r(g),l!==void 0&&i.hasValue){var S=i.value;if(l(S,g))return m=S}return m=g}if(S=m,np(h,g))return S;var w=r(g);return l!==void 0&&l(S,w)?(h=g,S):(h=g,m=w)}var c=!1,h,m,p=n===void 0?null:n;return[function(){return s(t())},p===null?void 0:function(){return s(p())}]},[t,n,r,l]);var u=rp(e,o[0],o[1]);return op(function(){i.hasValue=!0,i.value=u},[u]),up(u),u};ac.exports=cc;var sp=ac.exports;const ap=Gu(sp),{useDebugValue:cp}=is,{useSyncExternalStoreWithSelector:fp}=ap;const dp=e=>e;function pp(e,t=dp,n){const r=fp(e.subscribe,e.getState,e.getServerState||e.getInitialState,t,n);return cp(r),r}const Xu=e=>{const t=typeof e=="function"?Hd(e):e,n=(r,l)=>pp(t,r,l);return Object.assign(n,t),n},mp=e=>e?Xu(e):Xu,hp=mp((e,t)=>({blocks:[],selectedBlockId:null,history:[],historyIndex:-1,setBlocks:n=>e({blocks:n,history:[],historyIndex:-1}),selectBlock:n=>e({selectedBlockId:n}),updateBlock:(n,r)=>{e(l=>({blocks:l.blocks.map(o=>o.id===n?{...o,...r}:o)}))},deleteBlock:n=>{e(r=>({blocks:r.blocks.filter(l=>l.id!==n),selectedBlockId:null}))},addBlock:n=>{e(r=>({blocks:[...r.blocks,n]}))}}));function vp({onLoadPage:e,onExport:t,onCodeToggle:n}){const[r,l]=De.useState(""),[o,i]=De.useState(!1),u=()=>{r.trim()&&(e(r),l(""),i(!1))};return N.jsxs("div",{className:"top-bar",children:[N.jsxs("div",{className:"toolbar",children:[N.jsx("button",{className:"btn",onClick:()=>i(!o),children:"📥 Load Page"}),N.jsx("button",{className:"btn",onClick:t,children:"📤 Export HTML"}),N.jsxs("button",{className:"btn",onClick:n,children:["<>"," Code View"]})]}),o&&N.jsx("div",{className:"loader-modal",children:N.jsxs("div",{className:"loader-content",children:[N.jsx("h3",{children:"Load a Page"}),N.jsx("textarea",{value:r,onChange:s=>l(s.target.value),placeholder:"Paste HTML or enter GitHub/canada.ca URL...",rows:"6"}),N.jsxs("div",{className:"loader-buttons",children:[N.jsx("button",{onClick:u,children:"Load"}),N.jsx("button",{onClick:()=>i(!1),children:"Cancel"})]})]})})]})}function yp({blocks:e,selectedBlockId:t,onSelectBlock:n}){const r=De.useRef(null);return De.useEffect(()=>{if(!r.current)return;const l=Ii(e),o=r.current.contentDocument;o.open(),o.write(`
-      <!DOCTYPE html>
+ */var yl=De,ep=bd;function tp(e,t){return e===t&&(e!==0||1/e===1/t)||e!==e&&t!==t}var np=typeof Object.is=="function"?Object.is:tp,rp=ep.useSyncExternalStore,lp=yl.useRef,op=yl.useEffect,ip=yl.useMemo,up=yl.useDebugValue;cc.useSyncExternalStoreWithSelector=function(e,t,n,r,l){var o=lp(null);if(o.current===null){var i={hasValue:!1,value:null};o.current=i}else i=o.current;o=ip(function(){function s(g){if(!c){if(c=!0,h=g,g=r(g),l!==void 0&&i.hasValue){var S=i.value;if(l(S,g))return m=S}return m=g}if(S=m,np(h,g))return S;var w=r(g);return l!==void 0&&l(S,w)?(h=g,S):(h=g,m=w)}var c=!1,h,m,p=n===void 0?null:n;return[function(){return s(t())},p===null?void 0:function(){return s(p())}]},[t,n,r,l]);var u=rp(e,o[0],o[1]);return op(function(){i.hasValue=!0,i.value=u},[u]),up(u),u};ac.exports=cc;var sp=ac.exports;const ap=Gu(sp),{useDebugValue:cp}=is,{useSyncExternalStoreWithSelector:fp}=ap;const dp=e=>e;function pp(e,t=dp,n){const r=fp(e.subscribe,e.getState,e.getServerState||e.getInitialState,t,n);return cp(r),r}const Xu=e=>{const t=typeof e=="function"?Hd(e):e,n=(r,l)=>pp(t,r,l);return Object.assign(n,t),n},mp=e=>e?Xu(e):Xu,hp=mp((e,t)=>({blocks:[],selectedBlockId:null,history:[],historyIndex:-1,setBlocks:n=>e({blocks:n,history:[],historyIndex:-1}),selectBlock:n=>e({selectedBlockId:n}),updateBlock:(n,r)=>{e(l=>({blocks:l.blocks.map(o=>o.id===n?{...o,...r}:o)}))},deleteBlock:n=>{e(r=>({blocks:r.blocks.filter(l=>l.id!==n),selectedBlockId:null}))},addBlock:n=>{e(r=>({blocks:[...r.blocks,n]}))}}));function vp({onLoadPage:e,onExport:t,onCodeToggle:n}){const[r,l]=De.useState(""),[o,i]=De.useState(!1),u=()=>{r.trim()&&(e(r),l(""),i(!1))};return N.jsxs("div",{className:"top-bar",children:[N.jsxs("div",{className:"toolbar",children:[N.jsx("button",{className:"btn",onClick:()=>i(!o),children:"📥 Load Page"}),N.jsx("button",{className:"btn",onClick:t,children:"📤 Export HTML"}),N.jsxs("button",{className:"btn",onClick:n,children:["<>"," Code View"]})]}),o&&N.jsx("div",{className:"loader-modal",children:N.jsxs("div",{className:"loader-content",children:[N.jsx("h3",{children:"Load a Page"}),N.jsx("textarea",{value:r,onChange:s=>l(s.target.value),placeholder:"Paste HTML or enter GitHub/canada.ca URL...",rows:"6"}),N.jsxs("div",{className:"loader-buttons",children:[N.jsx("button",{onClick:u,children:"Load"}),N.jsx("button",{onClick:()=>i(!1),children:"Cancel"})]})]})})]})}function yp({blocks:e,selectedBlockId:t,onSelectBlock:n}){const r=De.useRef(null);return De.useEffect(()=>{if(!r.current)return;const l=Ii(e),o=r.current.contentDocument,i=`<!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        
+        <!-- WET Framework CSS -->
         <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/css/wet-boew.min.css">
         <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/css/theme.min.css">
+        
+        <!-- WET Print CSS -->
+        <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/css/print.css" media="print">
+        
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/assets/favicon.ico">
+        
+        <title>Page Preview</title>
         <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-          [data-block-selected] { outline: 3px solid #0066cc; padding: 8px; cursor: pointer; }
-          [data-block-id] { cursor: pointer; }
-          [data-block-id]:hover { background-color: rgba(0, 102, 204, 0.05); }
+          body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0;
+            padding: 20px;
+          }
+          main {
+            max-width: 1200px;
+            margin: 0 auto;
+          }
+          [data-block-id] { 
+            position: relative;
+            outline: 2px dashed rgba(0, 102, 204, 0.3);
+            outline-offset: 2px;
+            cursor: pointer;
+            transition: outline 0.2s;
+          }
+          [data-block-id]:hover { 
+            outline: 2px solid #0066cc;
+            outline-offset: 2px;
+            background-color: rgba(0, 102, 204, 0.02);
+          }
+          [data-block-selected] { 
+            outline: 2px solid #0066cc !important;
+            background-color: rgba(0, 102, 204, 0.05) !important;
+          }
         </style>
       </head>
       <body>
-        <main>
+        <main property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement" class="container">
           ${l}
         </main>
+        
+        <!-- WET Framework JS -->
+        <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/js/wet-boew.min.js"><\/script>
+        <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/js/theme.min.js"><\/script>
+        
+        <script>
+          // Listen for clicks on editable blocks
+          document.querySelectorAll('[data-block-id]').forEach(el => {
+            el.addEventListener('click', function(e) {
+              e.stopPropagation();
+              const blockId = this.getAttribute('data-block-id');
+              window.parent.postMessage({ 
+                type: 'selectBlock', 
+                blockId: blockId 
+              }, '*');
+            });
+          });
+          
+          // Trigger WET initialization after content loads
+          if (window.wb) {
+            window.wb.ready.then(() => {
+              console.log('WET framework initialized');
+            });
+          }
+        <\/script>
       </body>
-      </html>
-    `),o.close(),o.querySelectorAll("[data-block-id]").forEach(u=>{u.addEventListener("click",s=>{s.stopPropagation();const c=u.dataset.blockId;n(c)})})},[e,t]),N.jsx("div",{className:"preview-wrapper",children:N.jsx("iframe",{ref:r,title:"Page Preview",className:"preview-iframe"})})}function gp({block:e,onChange:t,onDelete:n}){return N.jsxs("div",{className:"property-panel",children:[N.jsxs("h3",{children:["Edit ",e.type]}),(e.type==="text"||e.type==="heading")&&N.jsxs("div",{className:"form-group",children:[N.jsx("label",{children:"Text"}),N.jsx("textarea",{value:e.content.text||"",onChange:r=>t({...e,content:{...e.content,text:r.target.value}}),rows:"4"})]}),e.type==="heading"&&N.jsxs("div",{className:"form-group",children:[N.jsx("label",{children:"Level"}),N.jsxs("select",{value:e.content.level||"h2",onChange:r=>t({...e,content:{...e.content,level:r.target.value}}),children:[N.jsx("option",{value:"h1",children:"H1"}),N.jsx("option",{value:"h2",children:"H2"}),N.jsx("option",{value:"h3",children:"H3"})]})]}),e.type==="subway"&&N.jsxs("div",{className:"form-group",children:[N.jsx("label",{children:"Title"}),N.jsx("input",{type:"text",value:e.content.title||"",onChange:r=>t({...e,content:{...e.content,title:r.target.value}})})]}),N.jsxs("div",{className:"form-group",children:[N.jsx("label",{children:"CSS Classes"}),N.jsx("input",{type:"text",value:e.content.classes||"",onChange:r=>t({...e,content:{...e.content,classes:r.target.value}}),placeholder:"e.g., mrgn-tp-lg mrgn-bttm-lg"})]}),N.jsx("button",{className:"btn-delete",onClick:n,children:"Delete Block"})]})}const wp=[{slug:"heading",name:"Heading",icon:"📝"},{slug:"text",name:"Text Block",icon:"¶"},{slug:"subway",name:"Subway Navigation",icon:"🗺️"},{slug:"alert",name:"Alert",icon:"⚠️"},{slug:"accordion",name:"Accordion",icon:"📋"},{slug:"button",name:"Button",icon:"🔘"}];function Sp({onInsert:e}){const t=(n,r)=>{n.dataTransfer.effectAllowed="copy",n.dataTransfer.setData("componentSlug",r)};return N.jsxs("div",{className:"component-library",children:[N.jsx("h3",{children:"Components"}),N.jsx("div",{className:"component-list",children:wp.map(n=>N.jsxs("div",{className:"component-item",draggable:!0,onDragStart:r=>t(r,n.slug),onClick:()=>e(n.slug),title:"Drag to insert, or click",children:[N.jsx("span",{className:"icon",children:n.icon}),N.jsx("span",{className:"name",children:n.name})]},n.slug))})]})}function kp({blocks:e,onChange:t}){const n=Ii(e),r=l=>{console.log("Code editing not yet implemented")};return N.jsxs("div",{className:"code-view",children:[N.jsx("h3",{children:"HTML Source"}),N.jsx("textarea",{value:n,onChange:r,className:"code-editor"}),N.jsx("p",{className:"note",children:"Tip: Edit the visual view, then switch here to copy code"})]})}function Ep(){const{blocks:e,selectedBlockId:t,selectBlock:n,updateBlock:r,deleteBlock:l,addBlock:o,setBlocks:i}=hp(),[u,s]=De.useState(!1),[c,h]=De.useState(!1),m=e.find(w=>w.id===t);return N.jsxs("div",{className:"app",children:[N.jsx(vp,{onLoadPage:p,onExport:g,onCodeToggle:()=>s(!u)}),N.jsxs("div",{className:"editor-layout",children:[N.jsx("aside",{className:"sidebar sidebar-left",children:N.jsx(Sp,{onInsert:S})}),N.jsx("div",{className:"preview-container",children:u?N.jsx(kp,{blocks:e,onChange:i}):N.jsx(yp,{blocks:e,selectedBlockId:t,onSelectBlock:n})}),N.jsx("aside",{className:"sidebar sidebar-right",children:m?N.jsx(gp,{block:m,onChange:w=>r(m.id,w),onDelete:()=>l(m.id)}):N.jsx("div",{className:"empty-state",children:"Select an element to edit"})})]})]});async function p(w){h(!0);try{let z;w.startsWith("http")?z=await(await fetch(w)).text():z=w;const f=Bd(z);i(f),n(null)}catch(z){alert("Error loading page: "+z.message)}finally{h(!1)}}function g(){const w=Ii(e),z=document.createElement("a");z.setAttribute("href","data:text/html;charset=utf-8,"+encodeURIComponent(w)),z.setAttribute("download","page.html"),z.style.display="none",document.body.appendChild(z),z.click(),document.body.removeChild(z)}function S(w){const z={id:"block_"+Date.now(),type:w,version:"1.0.0",content:Vd(w),selected:!1};o(z),n(z.id)}}Xl.createRoot(document.getElementById("root")).render(N.jsx(is.StrictMode,{children:N.jsx(Ep,{})}));
+      </html>`;o.open(),o.write(i),o.close();const u=s=>{s.data.type==="selectBlock"&&n(s.data.blockId)};return window.addEventListener("message",u),()=>{window.removeEventListener("message",u)}},[e,t,n]),N.jsx("div",{className:"preview-wrapper",children:N.jsx("iframe",{ref:r,title:"Page Preview",className:"preview-iframe",sandbox:"allow-same-origin allow-scripts allow-popups"})})}function gp({block:e,onChange:t,onDelete:n}){return N.jsxs("div",{className:"property-panel",children:[N.jsxs("h3",{children:["Edit ",e.type]}),(e.type==="text"||e.type==="heading")&&N.jsxs("div",{className:"form-group",children:[N.jsx("label",{children:"Text"}),N.jsx("textarea",{value:e.content.text||"",onChange:r=>t({...e,content:{...e.content,text:r.target.value}}),rows:"4"})]}),e.type==="heading"&&N.jsxs("div",{className:"form-group",children:[N.jsx("label",{children:"Level"}),N.jsxs("select",{value:e.content.level||"h2",onChange:r=>t({...e,content:{...e.content,level:r.target.value}}),children:[N.jsx("option",{value:"h1",children:"H1"}),N.jsx("option",{value:"h2",children:"H2"}),N.jsx("option",{value:"h3",children:"H3"})]})]}),e.type==="subway"&&N.jsxs("div",{className:"form-group",children:[N.jsx("label",{children:"Title"}),N.jsx("input",{type:"text",value:e.content.title||"",onChange:r=>t({...e,content:{...e.content,title:r.target.value}})})]}),N.jsxs("div",{className:"form-group",children:[N.jsx("label",{children:"CSS Classes"}),N.jsx("input",{type:"text",value:e.content.classes||"",onChange:r=>t({...e,content:{...e.content,classes:r.target.value}}),placeholder:"e.g., mrgn-tp-lg mrgn-bttm-lg"})]}),N.jsx("button",{className:"btn-delete",onClick:n,children:"Delete Block"})]})}const wp=[{slug:"heading",name:"Heading",icon:"📝"},{slug:"text",name:"Text Block",icon:"¶"},{slug:"subway",name:"Subway Navigation",icon:"🗺️"},{slug:"alert",name:"Alert",icon:"⚠️"},{slug:"accordion",name:"Accordion",icon:"📋"},{slug:"button",name:"Button",icon:"🔘"}];function Sp({onInsert:e}){const t=(n,r)=>{n.dataTransfer.effectAllowed="copy",n.dataTransfer.setData("componentSlug",r)};return N.jsxs("div",{className:"component-library",children:[N.jsx("h3",{children:"Components"}),N.jsx("div",{className:"component-list",children:wp.map(n=>N.jsxs("div",{className:"component-item",draggable:!0,onDragStart:r=>t(r,n.slug),onClick:()=>e(n.slug),title:"Drag to insert, or click",children:[N.jsx("span",{className:"icon",children:n.icon}),N.jsx("span",{className:"name",children:n.name})]},n.slug))})]})}function kp({blocks:e,onChange:t}){const n=Ii(e),r=l=>{console.log("Code editing not yet implemented")};return N.jsxs("div",{className:"code-view",children:[N.jsx("h3",{children:"HTML Source"}),N.jsx("textarea",{value:n,onChange:r,className:"code-editor"}),N.jsx("p",{className:"note",children:"Tip: Edit the visual view, then switch here to copy code"})]})}function Ep(){const{blocks:e,selectedBlockId:t,selectBlock:n,updateBlock:r,deleteBlock:l,addBlock:o,setBlocks:i}=hp(),[u,s]=De.useState(!1),[c,h]=De.useState(!1),m=e.find(w=>w.id===t);return N.jsxs("div",{className:"app",children:[N.jsx(vp,{onLoadPage:p,onExport:g,onCodeToggle:()=>s(!u)}),N.jsxs("div",{className:"editor-layout",children:[N.jsx("aside",{className:"sidebar sidebar-left",children:N.jsx(Sp,{onInsert:S})}),N.jsx("div",{className:"preview-container",children:u?N.jsx(kp,{blocks:e,onChange:i}):N.jsx(yp,{blocks:e,selectedBlockId:t,onSelectBlock:n})}),N.jsx("aside",{className:"sidebar sidebar-right",children:m?N.jsx(gp,{block:m,onChange:w=>r(m.id,w),onDelete:()=>l(m.id)}):N.jsx("div",{className:"empty-state",children:"Select an element to edit"})})]})]});async function p(w){h(!0);try{let z;w.startsWith("http")?z=await(await fetch(w)).text():z=w;const f=Bd(z);i(f),n(null)}catch(z){alert("Error loading page: "+z.message)}finally{h(!1)}}function g(){const w=Ii(e),z=document.createElement("a");z.setAttribute("href","data:text/html;charset=utf-8,"+encodeURIComponent(w)),z.setAttribute("download","page.html"),z.style.display="none",document.body.appendChild(z),z.click(),document.body.removeChild(z)}function S(w){const z={id:"block_"+Date.now(),type:w,version:"1.0.0",content:Vd(w),selected:!1};o(z),n(z.id)}}Xl.createRoot(document.getElementById("root")).render(N.jsx(is.StrictMode,{children:N.jsx(Ep,{})}));
