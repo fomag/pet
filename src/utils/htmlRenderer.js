@@ -74,53 +74,37 @@ export function parseHTML(html) {
     }
 
     // Subway navigation
-
-if (tag === 'nav' && (classList.includes('gc-subway') || classList.includes('provisional'))) {
-  const title = node.querySelector('h2')?.textContent.trim() || 'Navigation';
-  
-  const items = [];
-  
-  // Handle both <dl> (definition list) and <ul> structures
-  const dts = node.querySelectorAll('dt');
-  if (dts.length > 0) {
-    // DL structure (dt/dd pairs)
-    dts.forEach(dt => {
-      const link = dt.querySelector('a');
-      const dd = dt.nextElementSibling;
-      if (link) {
-        items.push({
-          label: link.textContent.trim(),
-          url: link.getAttribute('href') || '#',
-          description: dd?.textContent.trim() || ''
+    if (tag === 'nav' && (classList.includes('gc-subway') || classList.includes('provisional'))) {
+      const title = node.querySelector('h2')?.textContent.trim() || 'Navigation';
+      const items = [];
+      
+      // Handle both <dl> (definition list) and <ul> structures
+      const dts = node.querySelectorAll('dt');
+      if (dts.length > 0) {
+        // DL structure (dt/dd pairs)
+        dts.forEach(dt => {
+          const link = dt.querySelector('a');
+          const dd = dt.nextElementSibling;
+          if (link) {
+            items.push({
+              label: link.textContent.trim(),
+              url: link.getAttribute('href') || '#',
+              description: dd?.textContent.trim() || ''
+            });
+          }
+        });
+      } else {
+        // Fallback to UL structure
+        node.querySelectorAll('li').forEach(li => {
+          const link = li.querySelector('a');
+          if (link) {
+            items.push({
+              label: link.textContent.trim(),
+              url: link.getAttribute('href') || '#'
+            });
+          }
         });
       }
-    });
-  } else {
-    // Fallback to UL structure
-    node.querySelectorAll('li').forEach(li => {
-      const link = li.querySelector('a');
-      if (link) {
-        items.push({
-          label: link.textContent.trim(),
-          url: link.getAttribute('href') || '#'
-        });
-      }
-    });
-  }
-
-  blocks.push({
-    id: 'block_' + Date.now() + Math.random(),
-    type: 'subway',
-    version: '3.0.0',
-    content: {
-      title,
-      items,
-      classes: classList
-    }
-  });
-  return;
-}
-
 
       blocks.push({
         id: 'block_' + Date.now() + Math.random(),
@@ -176,6 +160,20 @@ if (tag === 'nav' && (classList.includes('gc-subway') || classList.includes('pro
   // Start processing from main content
   main.childNodes.forEach(node => processNode(node));
 
+  // Parse pager navigation (next/previous buttons)
+  main.querySelectorAll('nav.pager, .pager').forEach(pager => {
+    if (pager.textContent.trim()) {
+      blocks.push({
+        id: 'block_' + Date.now() + Math.random(),
+        type: 'text',
+        content: {
+          text: pager.outerHTML,
+          classes: 'pager'
+        }
+      });
+    }
+  });
+
   return blocks.length > 0 ? blocks : [
     {
       id: 'block_welcome',
@@ -185,25 +183,7 @@ if (tag === 'nav' && (classList.includes('gc-subway') || classList.includes('pro
       }
     }
   ];
-
-
-
-
-
-// Parse pager navigation (next/previous buttons)
-main.querySelectorAll('nav.pager, .pager').forEach(pager => {
-  if (pager.textContent.trim()) {
-    blocks.push({
-      id: 'block_' + Date.now() + Math.random(),
-      type: 'text',
-      content: {
-        text: pager.outerHTML,
-        classes: 'pager'
-      }
-    });
-  }
-});
-
+}
 
 export function renderHTML(blocks) {
   return blocks.map(block => {
@@ -216,7 +196,6 @@ export function renderHTML(blocks) {
         return `<${level} ${wrapperAttrs}${classes}>${block.content.text || 'Heading'}</${level}>`;
       
       case 'text':
-        // If it's already HTML (list or other), render as-is
         if (block.content.text.includes('<')) {
           return `<div ${wrapperAttrs}${classes}>${block.content.text}</div>`;
         }
@@ -229,16 +208,6 @@ export function renderHTML(blocks) {
           <dd>${item.description}</dd>
         `).join('');
   
-  return `
-    <nav class="provisional gc-subway" ${wrapperAttrs} aria-label="Subway navigation">
-      <h2>${block.content.title || 'Navigation'}</h2>
-      <dl>
-        ${itemsHtml}
-      </dl>
-    </nav>
-  `;
-
-        
         return `
           <div class="row">
             <div class="col-md-8">
