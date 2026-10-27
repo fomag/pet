@@ -202,24 +202,26 @@ export function renderHTML(blocks) {
         return `<p ${wrapperAttrs}${classes}>${block.content.text || 'Text block'}</p>`;
       
       case 'subway':
-        const items = block.content.items || [];
-        const itemsHtml = items.map(item => `
-          <dt><a href="${item.url}">${item.label}</a></dt>
-          <dd>${item.description}</dd>
-        `).join('');
+  const items = block.content.items || [];
   
-        return `
-          <div class="row">
-            <div class="col-md-8">
-              <nav class="provisional gc-subway" ${wrapperAttrs} aria-label="Subway navigation">
-                <h2>${block.content.title || 'Navigation'}</h2>
-                <dl>
-                  ${itemsHtml}
-                </dl>
-              </nav>
-            </div>
-          </div>
-        `;
+  // Build the subway navigation with proper dl/dt/dd structure
+  const itemsHtml = items.map(item => {
+    const dd = item.description ? `<dd>${item.description}</dd>` : '';
+    return `
+      <dt><a href="${item.url}">${item.label}</a></dt>
+      ${dd}
+    `;
+  }).join('');
+  
+  return `
+    <nav class="provisional gc-subway" ${wrapperAttrs} aria-label="Subway navigation">
+      <h2>${block.content.title || 'Navigation'}</h2>
+      <dl>
+        ${itemsHtml}
+      </dl>
+    </nav>
+  `;
+
       
       case 'alert':
         return `
