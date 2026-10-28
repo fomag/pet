@@ -36,7 +36,7 @@ export default function BlocksList({ blocks, selectedBlockId, onSelectBlock, onD
         {blocks.length === 0 ? (
           <div className="empty">No blocks yet. Load a page to start.</div>
         ) : (
-          blocks.map((block, idx) => (
+          blocks.map((block) => (
             <div
               key={block.id}
               className={`block-item ${selectedBlockId === block.id ? 'selected' : ''}`}
