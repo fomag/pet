@@ -17,9 +17,9 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>Page Preview</title>
   
-  <!-- WET CSS -->
-  <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/css/wet-boew.min.css">
-  <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/css/theme.min.css">
+  <!-- WET CSS with absolute URLs -->
+  <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/css/wet-boew.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/css/theme.min.css" crossorigin="anonymous">
   
   <style>
     * { 
@@ -54,7 +54,7 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
     [data-block-id] { 
       position: relative;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: outline 0.2s;
       outline: 2px dashed rgba(0, 102, 204, 0.3);
       outline-offset: 2px;
     }
@@ -78,53 +78,22 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
       line-height: 1.3;
     }
     
-    h1 { 
-      font-size: 32px; 
-      font-weight: 700;
-    }
+    h1 { font-size: 32px; font-weight: 700; }
+    h2 { font-size: 24px; font-weight: 700; }
+    h3 { font-size: 20px; font-weight: 600; }
+    h4 { font-size: 18px; font-weight: 600; }
     
-    h2 { 
-      font-size: 24px; 
-      font-weight: 700;
-    }
+    p { margin: 15px 0; line-height: 1.6; }
+    ul, ol { margin: 15px 0 15px 40px; }
+    li { margin: 8px 0; }
+    a { color: #0066cc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
     
-    h3 { 
-      font-size: 20px; 
-      font-weight: 600;
-    }
-    
-    h4 { 
-      font-size: 18px; 
-      font-weight: 600;
-    }
-    
-    p { 
-      margin: 15px 0; 
-      line-height: 1.6;
-    }
-    
-    ul, ol { 
-      margin: 15px 0 15px 40px; 
-    }
-    
-    li { 
-      margin: 8px 0; 
-    }
-    
-    a { 
-      color: #0066cc; 
-      text-decoration: none;
-    }
-    
-    a:hover { 
-      text-decoration: underline; 
-    }
-    
-    /* WET gc-thickline */
+    /* gc-thickline - Canada.ca red line under h1 */
     .gc-thickline {
       border-bottom: 4px solid #af3025 !important;
-      padding-bottom: 0.5em;
-      margin-bottom: 15px;
+      padding-bottom: 0.5em !important;
+      margin-bottom: 15px !important;
     }
     
     /* Subway Navigation */
@@ -136,145 +105,146 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
       margin: 30px 0;
       border-radius: 4px;
       display: block !important;
+      page-break-inside: avoid;
     }
     
     nav.provisional.gc-subway h2,
     nav.gc-subway h2 {
-      margin-top: 0;
-      margin-bottom: 20px;
-      font-size: 18px;
-      font-weight: 700;
-      border-bottom: 3px solid #0066cc;
-      padding-bottom: 12px;
-      color: #333;
+      margin-top: 0 !important;
+      margin-bottom: 20px !important;
+      font-size: 18px !important;
+      font-weight: 700 !important;
+      border-bottom: 2px solid #0066cc !important;
+      padding-bottom: 12px !important;
+      color: #333 !important;
     }
     
     nav.provisional.gc-subway dl,
     nav.gc-subway dl {
-      margin: 0;
-      padding: 0;
-      display: block;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: block !important;
     }
     
     nav.provisional.gc-subway dt,
     nav.gc-subway dt {
-      margin-top: 15px;
-      margin-bottom: 8px;
-      display: block;
+      margin-top: 15px !important;
+      margin-bottom: 8px !important;
+      display: block !important;
+      font-weight: 700 !important;
     }
     
     nav.provisional.gc-subway dt a,
     nav.gc-subway dt a {
-      color: #0066cc;
-      font-weight: 700;
-      text-decoration: none;
-      display: block;
-      padding: 12px 0;
-      border-bottom: 1px solid #e0e0e0;
-      font-size: 15px;
+      color: #0066cc !important;
+      font-weight: 700 !important;
+      text-decoration: none !important;
+      display: block !important;
+      padding: 12px 0 !important;
+      border-bottom: 1px solid #e0e0e0 !important;
+      font-size: 15px !important;
     }
     
     nav.provisional.gc-subway dt a:hover,
     nav.gc-subway dt a:hover {
-      text-decoration: underline;
-      background: rgba(0, 102, 204, 0.05);
-      padding-left: 8px;
+      text-decoration: underline !important;
+      background: rgba(0, 102, 204, 0.05) !important;
+      padding-left: 8px !important;
     }
     
     nav.provisional.gc-subway dt a.active,
     nav.gc-subway dt a.active {
-      background: #e8f1f9;
-      border-left: 4px solid #0066cc;
-      padding-left: 8px;
+      background: #e8f1f9 !important;
+      border-left: 4px solid #0066cc !important;
+      padding-left: 8px !important;
     }
     
     nav.provisional.gc-subway dd,
     nav.gc-subway dd {
-      margin: 0 0 20px 0;
-      padding: 0;
-      color: #666;
-      font-size: 14px;
-      line-height: 1.5;
+      margin: 0 0 20px 0 !important;
+      padding: 0 !important;
+      color: #666 !important;
+      font-size: 14px !important;
+      line-height: 1.5 !important;
+      font-weight: normal !important;
     }
     
-    /* Pager/Navigation Buttons */
+    /* Pager Navigation */
     nav.pager,
     .pager {
-      margin-top: 40px;
-      padding-top: 30px;
-      border-top: 2px solid #ddd;
-      display: block;
+      margin-top: 40px !important;
+      padding-top: 30px !important;
+      border-top: 2px solid #ddd !important;
+      display: block !important;
     }
     
     nav.pager ul,
     .pager ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
+      list-style: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: flex !important;
+      gap: 15px !important;
+      flex-wrap: wrap !important;
     }
     
     nav.pager li,
     .pager li {
-      margin: 0;
-      display: block;
+      margin: 0 !important;
+      display: block !important;
     }
     
     nav.pager li a,
     .pager li a {
-      display: inline-block;
-      padding: 12px 20px;
-      background: #0066cc;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.2s;
-      border: none;
-      cursor: pointer;
+      display: inline-block !important;
+      padding: 12px 20px !important;
+      background: #0066cc !important;
+      color: white !important;
+      text-decoration: none !important;
+      border-radius: 4px !important;
+      font-weight: 600 !important;
+      font-size: 14px !important;
+      border: none !important;
+      cursor: pointer !important;
     }
     
     nav.pager li a:hover,
     .pager li a:hover {
-      background: #0052a3;
-      text-decoration: none;
+      background: #0052a3 !important;
+      text-decoration: none !important;
     }
     
     nav.pager li.previous a,
     .pager li.previous a {
-      background: #999;
+      background: #999 !important;
     }
     
     nav.pager li.previous a:hover,
     .pager li.previous a:hover {
-      background: #777;
+      background: #777 !important;
     }
     
-    /* Alert styling */
+    /* Alert */
     .alert {
-      padding: 15px 20px;
-      margin: 15px 0;
-      border-left: 4px solid;
-      border-radius: 4px;
-      display: block;
+      padding: 15px 20px !important;
+      margin: 15px 0 !important;
+      border-left: 4px solid !important;
+      border-radius: 4px !important;
+      display: block !important;
     }
     
     .alert-info {
-      background: #e3f2fd;
-      border-color: #2196f3;
-      color: #1565c0;
+      background: #e3f2fd !important;
+      border-color: #2196f3 !important;
+      color: #1565c0 !important;
     }
     
     .alert h2, 
     .alert h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
+      margin-top: 0 !important;
+      margin-bottom: 10px !important;
     }
     
-    /* Visibility classes */
     .wb-inv {
       position: absolute !important;
       clip: rect(1px, 1px, 1px, 1px) !important;
@@ -296,6 +266,20 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
   </script>
   <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/js/wet-boew.min.js" defer><\/script>
   <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/js/theme.min.js" defer><\/script>
+  
+  <script>
+    // Handle clicks on blocks for selection
+    document.querySelectorAll('[data-block-id]').forEach(el => {
+      el.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const blockId = this.getAttribute('data-block-id');
+        window.parent.postMessage({ 
+          type: 'selectBlock', 
+          blockId: blockId 
+        }, '*');
+      });
+    });
+  </script>
 </body>
 </html>`;
 
@@ -304,30 +288,17 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
     doc.write(fullHTML);
     doc.close();
 
-  }, [blocks, selectedBlockId, onSelectBlock]);
-
-  // Handle block selection by detecting which element is clicked
-  useEffect(() => {
-    if (!iframeRef.current) return;
-
-    const handleIframeClick = () => {
-      const doc = iframeRef.current.contentDocument;
-      if (!doc) return;
-
-      const clickHandler = (e) => {
-        if (e.target.hasAttribute('data-block-id')) {
-          const blockId = e.target.getAttribute('data-block-id');
-          onSelectBlock(blockId);
-        }
-      };
-
-      doc.addEventListener('click', clickHandler);
-
-      return () => doc.removeEventListener('click', clickHandler);
+    // Listen for block selection from iframe
+    const handleMessage = (e) => {
+      if (e.data.type === 'selectBlock') {
+        onSelectBlock(e.data.blockId);
+      }
     };
+    
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
 
-    handleIframeClick();
-  }, [onSelectBlock]);
+  }, [blocks, selectedBlockId, onSelectBlock]);
 
   return (
     <div className="preview-wrapper">
