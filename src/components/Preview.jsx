@@ -17,7 +17,7 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>Page Preview</title>
   
-  <!-- WET CSS -->
+  <!-- WET CSS - attempt to load -->
   <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/css/wet-boew.min.css">
   <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/css/theme.min.css">
   
@@ -127,7 +127,7 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
       margin-bottom: 15px;
     }
     
-    /* Subway Navigation */
+    /* Subway Navigation - CRITICAL STYLING */
     nav.provisional.gc-subway,
     nav.gc-subway {
       background: #f5f5f5;
@@ -233,8 +233,6 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
       font-weight: 600;
       font-size: 14px;
       transition: all 0.2s;
-      border: none;
-      cursor: pointer;
     }
     
     nav.pager li a:hover,
@@ -251,6 +249,16 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
     nav.pager li.previous a:hover,
     .pager li.previous a:hover {
       background: #777;
+    }
+    
+    nav.pager li.next a,
+    .pager li.next a {
+      background: #0066cc;
+    }
+    
+    nav.pager li.next a:hover,
+    .pager li.next a:hover {
+      background: #0052a3;
     }
     
     /* Alert styling */
@@ -296,6 +304,20 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
   </script>
   <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/js/wet-boew.min.js" defer><\/script>
   <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/js/theme.min.js" defer><\/script>
+  
+  <script>
+    // Handle clicks on blocks for selection
+    document.querySelectorAll('[data-block-id]').forEach(el => {
+      el.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const blockId = this.getAttribute('data-block-id');
+        window.parent.postMessage({ 
+          type: 'selectBlock', 
+          blockId: blockId 
+        }, '*');
+      });
+    });
+  </script>
 </body>
 </html>`;
 
@@ -304,30 +326,17 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
     doc.write(fullHTML);
     doc.close();
 
-  }, [blocks, selectedBlockId, onSelectBlock]);
-
-  // Handle block selection by detecting which element is clicked
-  useEffect(() => {
-    if (!iframeRef.current) return;
-
-    const handleIframeClick = () => {
-      const doc = iframeRef.current.contentDocument;
-      if (!doc) return;
-
-      const clickHandler = (e) => {
-        if (e.target.hasAttribute('data-block-id')) {
-          const blockId = e.target.getAttribute('data-block-id');
-          onSelectBlock(blockId);
-        }
-      };
-
-      doc.addEventListener('click', clickHandler);
-
-      return () => doc.removeEventListener('click', clickHandler);
+    // Listen for block selection from iframe
+    const handleMessage = (e) => {
+      if (e.data.type === 'selectBlock') {
+        onSelectBlock(e.data.blockId);
+      }
     };
+    
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
 
-    handleIframeClick();
-  }, [onSelectBlock]);
+  }, [blocks, selectedBlockId, onSelectBlock]);
 
   return (
     <div className="preview-wrapper">
@@ -335,7 +344,7 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
         ref={iframeRef} 
         title="Page Preview" 
         className="preview-iframe"
-        sandbox="allow-scripts"
+        sandbox="allow-same-origin allow-scripts"
       />
     </div>
   );
