@@ -3,14 +3,12 @@ import { useStore } from './store/useStore';
 import { parseHTML, renderHTML, getDefaultContent } from './utils/htmlRenderer';
 import TopBar from './components/TopBar';
 import BlocksList from './components/BlocksList';
-import EditorView from './components/EditorView';
+import Preview from './components/Preview';
 import PropertyPanel from './components/PropertyPanel';
-import PreviewModal from './components/PreviewModal';
 import './App.css';
 
 export default function App() {
-  const { blocks, selectedBlockId, selectBlock, updateBlock, deleteBlock, addBlock, moveBlock, setBlocks } = useStore();
-  const [showPreview, setShowPreview] = useState(false);
+  const { blocks, selectedBlockId, selectBlock, updateBlock, deleteBlock, addBlock, setBlocks } = useStore();
   const [showCode, setShowCode] = useState(false);
 
   const selectedBlock = blocks.find(b => b.id === selectedBlockId);
@@ -66,7 +64,6 @@ export default function App() {
       <TopBar 
         onLoadPage={handleLoadPage}
         onExport={handleExport}
-        onPreview={() => setShowPreview(true)}
         onCodeToggle={() => setShowCode(!showCode)}
       />
 
@@ -78,17 +75,16 @@ export default function App() {
             selectedBlockId={selectedBlockId}
             onSelectBlock={selectBlock}
             onDeleteBlock={deleteBlock}
-            onMoveBlock={moveBlock}
             onAddBlock={addBlock}
           />
         </aside>
 
-        {/* Center: Editor View */}
+        {/* Center: WYSIWYG Preview */}
         <div className="editor-center">
           {showCode ? (
             <CodeView blocks={blocks} />
           ) : (
-            <EditorView 
+            <Preview 
               blocks={blocks}
               selectedBlockId={selectedBlockId}
               onSelectBlock={selectBlock}
@@ -107,24 +103,15 @@ export default function App() {
           ) : (
             <div className="empty-state">
               <p>Select a block to edit</p>
-              <small>Click any component on the left or center</small>
+              <small>Click any component in the preview</small>
             </div>
           )}
         </aside>
       </div>
-
-      {/* Preview Modal */}
-      {showPreview && (
-        <PreviewModal 
-          blocks={blocks}
-          onClose={() => setShowPreview(false)}
-        />
-      )}
     </div>
   );
 }
 
-// CodeView component
 function CodeView({ blocks }) {
   const html = renderHTML(blocks);
   return (
