@@ -5,11 +5,13 @@ import TopBar from './components/TopBar';
 import BlocksList from './components/BlocksList';
 import Preview from './components/Preview';
 import PropertyPanel from './components/PropertyPanel';
+import PreviewModal from './components/PreviewModal';
 import './App.css';
 
 export default function App() {
   const { blocks, selectedBlockId, selectBlock, updateBlock, deleteBlock, addBlock, setBlocks } = useStore();
   const [showCode, setShowCode] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   const selectedBlock = blocks.find(b => b.id === selectedBlockId);
 
@@ -64,6 +66,7 @@ export default function App() {
       <TopBar 
         onLoadPage={handleLoadPage}
         onExport={handleExport}
+        onPreview={() => setShowPreviewModal(true)}
         onCodeToggle={() => setShowCode(!showCode)}
       />
 
@@ -108,6 +111,14 @@ export default function App() {
           )}
         </aside>
       </div>
+
+      {/* Full Preview Modal */}
+      {showPreviewModal && (
+        <PreviewModal 
+          blocks={blocks}
+          onClose={() => setShowPreviewModal(false)}
+        />
+      )}
     </div>
   );
 }
