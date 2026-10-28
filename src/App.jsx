@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from './store/useStore';
+import { parseHTML, renderHTML, getDefaultContent } from './utils/htmlRenderer';
 import TopBar from './components/TopBar';
 import BlocksList from './components/BlocksList';
 import EditorView from './components/EditorView';
@@ -23,7 +24,6 @@ export default function App() {
       } else {
         html = input;
       }
-      const { parseHTML } = await import('./utils/htmlRenderer');
       const parsed = parseHTML(html);
       setBlocks(parsed);
       selectBlock(null);
@@ -33,7 +33,6 @@ export default function App() {
   };
 
   const handleExport = () => {
-    const { renderHTML } = require('./utils/htmlRenderer');
     const html = renderHTML(blocks);
     const fullPage = `<!DOCTYPE html>
 <html lang="en">
@@ -48,8 +47,8 @@ export default function App() {
   <main class="container">
     ${html}
   </main>
-  <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/js/wet-boew.min.js"></script>
-  <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/js/theme.min.js"></script>
+  <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/js/wet-boew.min.js"><\/script>
+  <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/js/theme.min.js"><\/script>
 </body>
 </html>`;
     
@@ -125,9 +124,8 @@ export default function App() {
   );
 }
 
-// CodeView component (simple for now)
+// CodeView component
 function CodeView({ blocks }) {
-  const { renderHTML } = require('./utils/htmlRenderer');
   const html = renderHTML(blocks);
   return (
     <div className="code-view">
