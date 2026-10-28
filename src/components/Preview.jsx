@@ -344,7 +344,7 @@ export default function Preview({ blocks, selectedBlockId, onSelectBlock }) {
         ref={iframeRef} 
         title="Page Preview" 
         className="preview-iframe"
-        sandbox="allow-same-origin allow-scripts"
+        sandbox="allow-scripts"
       />
     </div>
   );
