@@ -1,43 +1,95 @@
-import { parseHTML, renderHTML, getDefaultContent } from './utils/htmlRenderer';
 import React, { useState } from 'react';
 import { useStore } from './store/useStore';
 import TopBar from './components/TopBar';
-import Preview from './components/Preview';
+import BlocksList from './components/BlocksList';
+import EditorView from './components/EditorView';
 import PropertyPanel from './components/PropertyPanel';
-import ComponentLibrary from './components/ComponentLibrary';
-import CodeView from './components/CodeView';
+import PreviewModal from './components/PreviewModal';
 import './App.css';
 
 export default function App() {
-  const { blocks, selectedBlockId, selectBlock, updateBlock, deleteBlock, addBlock, setBlocks } = useStore();
+  const { blocks, selectedBlockId, selectBlock, updateBlock, deleteBlock, addBlock, moveBlock, setBlocks } = useStore();
+  const [showPreview, setShowPreview] = useState(false);
   const [showCode, setShowCode] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const selectedBlock = blocks.find(b => b.id === selectedBlockId);
+
+  const handleLoadPage = async (input) => {
+    try {
+      let html;
+      if (input.startsWith('http')) {
+        const response = await fetch(input);
+        html = await response.text();
+      } else {
+        html = input;
+      }
+      const { parseHTML } = await import('./utils/htmlRenderer');
+      const parsed = parseHTML(html);
+      setBlocks(parsed);
+      selectBlock(null);
+    } catch (err) {
+      alert('Error loading page: ' + err.message);
+    }
+  };
+
+  const handleExport = () => {
+    const { renderHTML } = require('./utils/htmlRenderer');
+    const html = renderHTML(blocks);
+    const fullPage = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/css/wet-boew.min.css">
+  <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/css/theme.min.css">
+  <title>Page</title>
+</head>
+<body>
+  <main class="container">
+    ${html}
+  </main>
+  <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/wet-boew/js/wet-boew.min.js"></script>
+  <script src="https://www.canada.ca/etc/designs/canada/wet-boew/v4_0_47/GCWeb/js/theme.min.js"></script>
+</body>
+</html>`;
+    
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(fullPage));
+    element.setAttribute('download', 'page.html');
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
 
   return (
     <div className="app">
       <TopBar 
-        onLoadPage={handleLoadPage} 
+        onLoadPage={handleLoadPage}
         onExport={handleExport}
+        onPreview={() => setShowPreview(true)}
         onCodeToggle={() => setShowCode(!showCode)}
       />
-      
+
       <div className="editor-layout">
-        {/* Left: Component Library */}
+        {/* Left: Blocks List */}
         <aside className="sidebar sidebar-left">
-          <ComponentLibrary onInsert={handleInsertComponent} />
+          <BlocksList
+            blocks={blocks}
+            selectedBlockId={selectedBlockId}
+            onSelectBlock={selectBlock}
+            onDeleteBlock={deleteBlock}
+            onMoveBlock={moveBlock}
+            onAddBlock={addBlock}
+          />
         </aside>
 
-        {/* Center: Preview */}
-        <div className="preview-container">
+        {/* Center: Editor View */}
+        <div className="editor-center">
           {showCode ? (
-            <CodeView 
-              blocks={blocks} 
-              onChange={setBlocks}
-            />
+            <CodeView blocks={blocks} />
           ) : (
-            <Preview 
+            <EditorView 
               blocks={blocks}
               selectedBlockId={selectedBlockId}
               onSelectBlock={selectBlock}
@@ -45,7 +97,7 @@ export default function App() {
           )}
         </div>
 
-        {/* Right: Property Panel */}
+        {/* Right: Properties Panel */}
         <aside className="sidebar sidebar-right">
           {selectedBlock ? (
             <PropertyPanel 
@@ -54,56 +106,33 @@ export default function App() {
               onDelete={() => deleteBlock(selectedBlock.id)}
             />
           ) : (
-            <div className="empty-state">Select an element to edit</div>
+            <div className="empty-state">
+              <p>Select a block to edit</p>
+              <small>Click any component on the left or center</small>
+            </div>
           )}
         </aside>
       </div>
+
+      {/* Preview Modal */}
+      {showPreview && (
+        <PreviewModal 
+          blocks={blocks}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
     </div>
   );
+}
 
-  async function handleLoadPage(input) {
-    setLoading(true);
-    try {
-      let html;
-      
-      // Detect if URL or paste
-      if (input.startsWith('http')) {
-        const response = await fetch(input);
-        html = await response.text();
-      } else {
-        html = input;
-      }
-      
-      const parsed = parseHTML(html);
-      setBlocks(parsed);
-      selectBlock(null);
-    } catch (err) {
-      alert('Error loading page: ' + err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function handleExport() {
-    const html = renderHTML(blocks);
-    const element = document.createElement('a');
-    element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(html));
-    element.setAttribute('download', 'page.html');
-    element.style.display = 'none';
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-  }
-
-  function handleInsertComponent(componentType) {
-    const newBlock = {
-      id: 'block_' + Date.now(),
-      type: componentType,
-      version: '1.0.0',
-      content: getDefaultContent(componentType),
-      selected: false
-    };
-    addBlock(newBlock);
-    selectBlock(newBlock.id);
-  }
+// CodeView component (simple for now)
+function CodeView({ blocks }) {
+  const { renderHTML } = require('./utils/htmlRenderer');
+  const html = renderHTML(blocks);
+  return (
+    <div className="code-view">
+      <h3>HTML Source</h3>
+      <textarea readOnly value={html} className="code-editor" />
+    </div>
+  );
 }
