@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function TopBar({ onLoadPage, onExport, onCodeToggle }) {
+export default function TopBar({ onLoadPage, onExport, onPreview, onCodeToggle }) {
   const [showLoader, setShowLoader] = useState(false);
   const [input, setInput] = useState('');
 
@@ -18,6 +18,9 @@ export default function TopBar({ onLoadPage, onExport, onCodeToggle }) {
         <div className="toolbar">
           <button className="btn" onClick={() => setShowLoader(!showLoader)}>
             📥 Load Page
+          </button>
+          <button className="btn" onClick={onPreview}>
+            👁️ Preview
           </button>
           <button className="btn" onClick={onCodeToggle}>
             {'<>'} Code View
