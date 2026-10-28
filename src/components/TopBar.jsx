@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-export default function TopBar({ onLoadPage, onExport, onCodeToggle }) {
-  const [input, setInput] = useState('');
+export default function TopBar({ onLoadPage, onExport, onPreview, onCodeToggle }) {
   const [showLoader, setShowLoader] = useState(false);
+  const [input, setInput] = useState('');
 
   const handleLoad = () => {
     if (input.trim()) {
@@ -13,36 +13,43 @@ export default function TopBar({ onLoadPage, onExport, onCodeToggle }) {
   };
 
   return (
-    <div className="top-bar">
-      <div className="toolbar">
-        <button className="btn" onClick={() => setShowLoader(!showLoader)}>
-          📥 Load Page
-        </button>
-        <button className="btn" onClick={onExport}>
-          📤 Export HTML
-        </button>
-        <button className="btn" onClick={onCodeToggle}>
-          {'<>'} Code View
-        </button>
+    <>
+      <div className="top-bar">
+        <div className="toolbar">
+          <button className="btn" onClick={() => setShowLoader(!showLoader)}>
+            📥 Load Page
+          </button>
+          <button className="btn" onClick={onPreview}>
+            👁️ Preview
+          </button>
+          <button className="btn" onClick={onCodeToggle}>
+            {'<>'} Code View
+          </button>
+          <button className="btn" onClick={onExport}>
+            📤 Export HTML
+          </button>
+        </div>
       </div>
 
       {showLoader && (
         <div className="loader-modal">
           <div className="loader-content">
             <h3>Load a Page</h3>
+            <p>Paste HTML, a GitHub URL, or a canada.ca URL</p>
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste HTML or enter GitHub/canada.ca URL..."
-              rows="6"
+              placeholder="https://www.canada.ca/... or paste HTML"
+              rows="8"
+              autoFocus
             />
             <div className="loader-buttons">
-              <button onClick={handleLoad}>Load</button>
-              <button onClick={() => setShowLoader(false)}>Cancel</button>
+              <button className="btn" onClick={handleLoad}>Load</button>
+              <button className="btn btn-secondary" onClick={() => setShowLoader(false)}>Cancel</button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
